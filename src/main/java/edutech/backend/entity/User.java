@@ -14,8 +14,19 @@ public class User {
     private Integer id;
     private String name;
     private String email;
+    private Integer mobile_no;
+
+    public Integer getMobile_no() {
+        return mobile_no;
+    }
+
+    public void setMobile_no(Integer mobile_no) {
+        this.mobile_no = mobile_no;
+    }
+
     private String password;
     private transient String confirmPassword;
+
 
     public String getName() {
         return name;
