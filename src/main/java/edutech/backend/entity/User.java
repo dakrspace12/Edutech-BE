@@ -1,6 +1,8 @@
 package edutech.backend.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -15,8 +17,18 @@ public class User {
     private String name;
     private String email;
     private Integer mobile_no;
+    @Enumerated (value=EnumType.STRING)
+    private Role role;
+    
+    public Role getRole() {
+		return role;
+	}
 
-    public Integer getMobile_no() {
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
+	public Integer getMobile_no() {
         return mobile_no;
     }
 
