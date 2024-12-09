@@ -1,20 +1,17 @@
 package edutech.backend.exception;
 
-import lombok.Getter;
-
-@Getter
 public class CustomException extends RuntimeException {
 
-    // Optional: Add an error code for more specific error classification
-    private String errorCode;
+    private static final long serialVersionUID = 1L;
 
+    // Constructor for message only
     public CustomException(String message) {
-        super(message);
+        super(message);  // Use the constructor from RuntimeException that accepts the message
     }
 
-    public CustomException(String message, String errorCode) {
-        super(message);
-        this.errorCode = errorCode;
+    // Constructor for message and cause
+    public CustomException(String message, Throwable cause) {
+        super(message, cause);  // Pass both message and cause to the superclass
     }
-
 }
+

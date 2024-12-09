@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: edutech_plateform
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/edutech  # Ensure this points to your correct database
+    username: ${DB_USERNAME}  # Make sure these environment variables are set properly in your local environment
+    password: ${DB_PASSWORD}  # Alternatively, you can hardcode these values in a secure way, but environment variables are safer
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate  # 'validate' ensures that the database schema matches the entities but doesn't modify the schema
+    show-sql: false  # Disable SQL query logging in production to avoid logging overhead
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect  # Dialect for MySQL 8, which is correct for your version
+        naming:
+          physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+jwt:
+  secret: ${JWT_SECRET}  # Ensure this is injected securely, such as via environment variables or secrets management
+  expirationMs: 3600000   # 1 hour expiration for access tokens
+  refreshExpirationMs: 86400000  # 24 hours expiration for refresh tokens
+
+server:
+  port: 8080  # Ensure the port doesn't conflict with other services
+
+debug: false  # Set false for production
+
+logging:
+  level:
+    org.springframework.web: INFO  # This will reduce logging verbosity for web requests in production
+    org.hibernate.SQL: WARN  # Only log warnings for SQL in production
+    org.hibernate.type.descriptor.sql.BasicBinder: ERROR  # Avoid sensitive data from being logged in production (e.g., passwords)
+    org.springframework.security: WARN  # Only log warnings related to security (e.g., authentication failures)

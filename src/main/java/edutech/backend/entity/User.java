@@ -1,82 +1,47 @@
 package edutech.backend.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+
+import java.util.Set;
 
 @Entity
+@Table(name = "users")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor  // Lombok will generate a constructor with all arguments
+@Builder
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private String name;
-    private String email;
-    private Integer mobile_no;
-    @Enumerated (value=EnumType.STRING)
-    private Role role;
-    
-    public Role getRole() {
-		return role;
-	}
+    private Long id;
 
-	public void setRole(Role role) {
-		this.role = role;
-	}
+    @Column(nullable = false, unique = true)
+    private String username;
 
-	public Integer getMobile_no() {
-        return mobile_no;
-    }
-
-    public void setMobile_no(Integer mobile_no) {
-        this.mobile_no = mobile_no;
-    }
-
+    @JsonIgnore
     private String password;
-    private transient String confirmPassword;
 
+    @Column(nullable = false, unique = true)
+    private String email;
 
-    public String getName() {
-        return name;
-    }
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles;
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
+    // Method to return role names as a comma-separated string
+    public String getRoleNames() {
+        return roles.stream()
+                .map(role -> role.getName().name())  // Assuming Role has a `name` attribute of type Enum
+                .reduce((role1, role2) -> role1 + "," + role2)
+                .orElse("");
     }
 }

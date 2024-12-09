@@ -1,33 +1,34 @@
 package edutech.backend.exception;
 
+
+
+
+import edutech.backend.dto.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Initialize logger
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    // Handle CustomException
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<String> handleCustomException(CustomException ex) {
-        // Log the exception details
-        logger.error("Custom exception occurred: " + ex.getMessage());
-
-        // Return response with BAD_REQUEST status
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ApiResponse> handleCustomException(CustomException ex) {
+        logger.error("CustomException: {}", ex.getMessage());  // Log the error
+        ApiResponse response = new ApiResponse(false, ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    // Handle other general exceptions
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleGeneralException(Exception ex) {
-        // Log the exception details (stack trace for debugging)
-        logger.error("Unexpected error occurred", ex);
-
-        // Return response with INTERNAL_SERVER_ERROR status and a generic message
-        return new ResponseEntity<>("An unexpected error occurred: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ApiResponse> handleGeneralException(Exception ex) {
+        logger.error("Unexpected error: {}", ex.getMessage());  // Log the error
+        ApiResponse response = new ApiResponse(false, "An unexpected error occurred", null);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
