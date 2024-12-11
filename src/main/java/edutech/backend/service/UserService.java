@@ -1,34 +1,46 @@
 package edutech.backend.service;
 
+import edutech.backend.dto.ApiResponse;
 import edutech.backend.dto.LoginRequest;
 import edutech.backend.dto.SignupRequest;
+import edutech.backend.dto.UserDto;
 import edutech.backend.entity.User;
+import edutech.backend.exception.CustomException;
 import edutech.backend.repository.UserRepository;
-import edutech.backend.util.JwtUtil;
+import edutech.backend.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+
+    private final UserRepository userRepository;
+
+
+    private final PasswordEncoder passwordEncoder;
+
+
+    private final JwtTokenUtil jwtUtil;
+
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JwtUtil jwtUtil;
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenUtil jwtUtil) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+    }
 
     // Register a new user
-    public String registerUser(SignupRequest signupRequest) {
+    public ApiResponse<Void> registerUser(SignupRequest signupRequest) {
         // Check if the email is already in use
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            return "Email is already in use";  // Handle email duplication
+            throw new CustomException("Email is already in Use");
         }
 
         // Create a new user object
@@ -39,38 +51,52 @@ public class UserService {
 
         // Save the user in the repository
         userRepository.save(user);
-        return "User registered successfully";
+        return new ApiResponse<>(true, "User registered successfully", null);
     }
 
     // Authenticate user
     public String authenticateUser(LoginRequest loginRequest) {
-        // Find the user by username (make sure to use Optional here)
-        Optional<User> userOptional = userRepository.findByUsername(loginRequest.getUsername());
+        User user = userRepository.findByUsername(loginRequest.getUsername())
+                .orElseThrow(() -> new CustomException("Invalid username or password"));
 
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-
-            // Check if the password matches the one stored in the database
-            if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-                // Generate JWT token with the user's roles
-                return jwtUtil.generateToken(user.getUsername(), user.getRoles());
-            }
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            throw new CustomException("Invalid username or password");
         }
-        return null;  // Return null if the user is not found or password doesn't match
+
+        return jwtUtil.generateToken(user.getUsername(), user.getRoles());
     }
 
     // Get all users
-    public List<User> getAllUsers() {
-        return userRepository.findAll();  // Fetch all users from the repository
+    public List<UserDto> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
     // Get user by ID
-    public User getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);  // Return the user if found, otherwise null
+    public UserDto getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException("User not found with ID: " + id));
+        return convertToDto(user);
     }
 
     // Delete user by ID
     public void deleteUserById(Long id) {
-        userRepository.deleteById(id);  // Delete the user by ID
+        if (!userRepository.existsById(id)) {
+            throw new CustomException("User not found with ID: " + id);
+        }
+        userRepository.deleteById(id);
+    }
+
+    // Helper method to convert User to UserDto
+    private UserDto convertToDto(User user) {
+        UserDto userDto = new UserDto();
+        userDto.setId(user.getId());
+        userDto.setUsername(user.getUsername());
+        userDto.setEmail(user.getEmail());
+        userDto.setRoles(user.getRoles().stream()
+                .map(role -> role.getName().name())
+                .collect(Collectors.toSet()));
+        return userDto;
     }
 }

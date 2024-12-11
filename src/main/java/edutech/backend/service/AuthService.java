@@ -8,7 +8,6 @@ import edutech.backend.repository.RoleRepository;
 import edutech.backend.repository.UserRepository;
 import edutech.backend.security.CustomUserDetails;
 import edutech.backend.util.JwtTokenUtil;
-import edutech.backend.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,7 +32,7 @@ public class AuthService {
     private RoleRepository roleRepository;  // RoleRepository to fetch roles
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private JwtTokenUtil jwtUtil;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
