@@ -2,7 +2,7 @@ package edutech.backend.controller;
 
 import edutech.backend.entity.Course;
 import edutech.backend.exception.CourseNotFoundException;
-import edutech.backend.service.CourseService;
+import edutech.backend.service.CourseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import java.util.List;
 public class CourseController {
 
     @Autowired
-    private CourseService courseService;
+    private CourseServiceImpl courseService;
 
     @GetMapping
     public ResponseEntity<List<Course>> getAllCourses() {
