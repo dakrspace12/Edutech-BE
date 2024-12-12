@@ -5,8 +5,7 @@ import edutech.backend.dto.ApiResponse;
 import edutech.backend.dto.LoginRequest;
 import edutech.backend.dto.SignupRequest;
 import edutech.backend.dto.UserDto;
-import edutech.backend.entity.User;
-import edutech.backend.service.UserService;
+import edutech.backend.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,7 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Void>> registerUser(@RequestBody SignupRequest signupRequest) {

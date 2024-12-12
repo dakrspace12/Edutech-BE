@@ -5,7 +5,7 @@ package edutech.backend.controller;
 import edutech.backend.dto.ApiResponse;
 import edutech.backend.dto.LoginRequest;
 import edutech.backend.dto.SignupRequest;
-import edutech.backend.service.AuthService;
+import edutech.backend.service.AuthServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     @Autowired
-    private AuthService authService;
+    private AuthServiceImpl authService;
 
     // Endpoint for user registration
     @PostMapping("/register")

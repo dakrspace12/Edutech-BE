@@ -18,6 +18,18 @@ spring:
         naming:
           physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
 
+  mail:
+     host: smtp.office365.com
+     port: 587
+     username: anand9018@outlook.com
+     password: Shah@8711
+     properties:
+        mail:
+          smtp:
+            auth: true
+            starttls:
+              enable: true
+
 jwt:
   secret: ${JWT_SECRET}  # Ensure this is injected securely, such as via environment variables or secrets management
   expirationMs: 3600000   # 1 hour expiration for access tokens
