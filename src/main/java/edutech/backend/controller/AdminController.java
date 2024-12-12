@@ -7,10 +7,10 @@ import edutech.backend.dto.LoginRequest;
 import edutech.backend.dto.SignupRequest;
 import edutech.backend.entity.Course;
 import edutech.backend.entity.User;
-import edutech.backend.service.AdminService;
-import edutech.backend.service.AuthService;
-import edutech.backend.service.CourseService;
-import edutech.backend.service.UserService;
+import edutech.backend.service.AdminServiceImpl;
+import edutech.backend.service.AuthServiceImpl;
+import edutech.backend.service.CourseServiceImpl;
+import edutech.backend.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,16 +20,16 @@ import java.util.List;
 @RequestMapping("/api/v1/admin")
 public class AdminController {
 
-    @Autowired private AuthService authService;
+    @Autowired private AuthServiceImpl authService;
 
     @Autowired
-    private AdminService adminService;
+    private AdminServiceImpl adminService;
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @Autowired
-    private CourseService courseService;
+    private CourseServiceImpl courseService;
 
     // Endpoint to get all users
     @GetMapping("/users")
