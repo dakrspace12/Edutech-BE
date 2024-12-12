@@ -9,7 +9,7 @@ import edutech.backend.entity.Course;
 import edutech.backend.entity.User;
 import edutech.backend.service.AdminService;
 import edutech.backend.service.AuthService;
-import edutech.backend.service.CourseService;
+import edutech.backend.service.CourseServiceImpl;
 import edutech.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +29,7 @@ public class AdminController {
     private UserService userService;
 
     @Autowired
-    private CourseService courseService;
+    private CourseServiceImpl courseService;
 
     // Endpoint to get all users
     @GetMapping("/users")
