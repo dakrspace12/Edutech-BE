@@ -54,9 +54,11 @@ public class CourseService {
 
     // Delete a course by its ID
     @Transactional
-    public String deleteCourseById(Long id) {
+    public void deleteCourseById(Long id) throws CourseNotFoundException{
         // Try to delete the course by its ID
-        courseRepository.deleteById(id);
-        return "Course deleted successfully.";
+        if (!courseRepository.existsById(id)){
+            throw new  CourseNotFoundException("Course with ID "+id+" does not exist" );
+        }
+            courseRepository.deleteById(id);
     }
 }
