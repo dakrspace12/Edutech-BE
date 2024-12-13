@@ -10,7 +10,7 @@ import edutech.backend.entity.User;
 import edutech.backend.service.AdminService;
 import edutech.backend.service.AuthService;
 import edutech.backend.service.CourseService;
-import edutech.backend.service.UserService;
+import edutech.backend.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +26,7 @@ public class AdminController {
     private AdminService adminService;
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @Autowired
     private CourseService courseService;
