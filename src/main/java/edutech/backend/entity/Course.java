@@ -17,4 +17,5 @@ public class Course {
     private Long id;
     private String description;
     private String name;
+
 }
