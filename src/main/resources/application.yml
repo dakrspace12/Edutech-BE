@@ -17,6 +17,17 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect  # Dialect for MySQL 8, which is correct for your version
         naming:
           physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: "anandshaha8825@gmail.com"
+    password: "emsnalhahgvsqkoh"
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 jwt:
   secret: ${JWT_SECRET}  # Ensure this is injected securely, such as via environment variables or secrets management

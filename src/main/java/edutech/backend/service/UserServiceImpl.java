@@ -1,22 +1,24 @@
 package edutech.backend.service;
 
-import edutech.backend.dto.ApiResponse;
-import edutech.backend.dto.LoginRequest;
-import edutech.backend.dto.SignupRequest;
-import edutech.backend.dto.UserDto;
+import edutech.backend.dto.*;
 import edutech.backend.entity.User;
 import edutech.backend.exception.CustomException;
 import edutech.backend.repository.UserRepository;
 import edutech.backend.util.JwtTokenUtil;
+import io.jsonwebtoken.Claims;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService{
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
 
     private final UserRepository userRepository;
@@ -27,12 +29,14 @@ public class UserServiceImpl implements UserService{
 
     private final JwtTokenUtil jwtUtil;
 
+    private final EmailService emailService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenUtil jwtUtil) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenUtil jwtUtil, EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.emailService = emailService;
     }
 
     @Override
@@ -59,7 +63,7 @@ public class UserServiceImpl implements UserService{
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             throw new CustomException("Invalid username or password");
         }
-
+        logger.info("User authenticated successfully with username: {}", loginRequest.getUsername());
         return jwtUtil.generateToken(user.getUsername(), user.getRoles());
     }
 
@@ -83,8 +87,52 @@ public class UserServiceImpl implements UserService{
             throw new CustomException("User not found with ID: " + id);
         }
         userRepository.deleteById(id);
+        logger.info("User deleted successfully with ID: {}", id);
     }
-    
+
+    // New methods for password reset
+    @Override
+    public void requestPasswordReset(String email) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            String token = jwtUtil.generateToken(user.getUsername(), user.getRoles());
+            String resetLink = "http://localhost:8080/api/v1/users/reset-password?token=" + token;
+            emailService.sendSimpleMessage(email, "Password Reset Request", "Click the link to reset your password: " + resetLink);
+            logger.info("Password reset link sent to {}", email);
+        } else {
+            throw new CustomException("Email address not found");
+        }
+    }
+
+    @Override
+    public void resetPassword(String token, String newPassword) {
+        Claims claims = jwtUtil.extractResetPasswordClaims(token);
+        if (claims == null) {
+            throw new CustomException("Invalid token");
+        }
+
+        String username = claims.getSubject();
+        @SuppressWarnings("unchecked")
+        List<String> roles = claims.get("roles", List.class);
+
+        // Check if user has the required role (e.g., ROLE_ADMIN or ROLE_USER)
+        if (!roles.contains("ROLE_ADMIN") && !roles.contains("ROLE_USER")) {
+            throw new CustomException("User does not have the required role");
+        }
+
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+            logger.info("Password reset successfully for user: {}", username);
+        } else {
+            throw new CustomException("Invalid token or user not found");
+        }
+    }
+
+
     private UserDto convertToDto(User user) {
         UserDto userDto = new UserDto();
         userDto.setId(user.getId());

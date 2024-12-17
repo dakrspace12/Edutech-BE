@@ -37,7 +37,9 @@ public class WebSecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/auth/**",
+                                "/api/v1/users/request-password-reset",
+                                "/api/v1/users/reset-password").permitAll()
                         .anyRequest().authenticated())
                 .userDetailsService((UserDetailsService) customUserDetailsService)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
