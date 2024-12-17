@@ -1,9 +1,6 @@
 package edutech.backend.service;
 
-import edutech.backend.dto.ApiResponse;
-import edutech.backend.dto.LoginRequest;
-import edutech.backend.dto.SignupRequest;
-import edutech.backend.dto.UserDto;
+import edutech.backend.dto.*;
 
 import java.util.List;
 
@@ -13,5 +10,6 @@ public interface UserService {
     List<UserDto> getAllUsers();
     UserDto getUserById(Long id);
     void deleteUserById(Long id);
-
+    void requestPasswordReset(String email);
+    void resetPassword(String token, String newPassword);
 }

@@ -94,4 +94,13 @@ public class JwtTokenUtil {
         final String extractedUsername = extractUsername(token);
         return (extractedUsername.equals(username) && !isTokenExpired(token));
     }
+    // Extract claims specifically for reset password tokens
+    public Claims extractResetPasswordClaims(String token) {
+        try {
+            return extractAllClaims(token);
+        } catch (Exception e) {
+            System.err.println("Failed to extract claims from reset password token: " + e.getMessage());
+            return null;
+        }
+    }
 }
