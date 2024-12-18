@@ -32,10 +32,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String token = extractTokenFromRequest(request);
 
         if (token != null) {
-            // Extract the username from the token
             String username = jwtTokenUtil.extractUsername(token);
 
-            // Validate the token by passing both the token and the extracted username
             if (jwtTokenUtil.validateToken(token, username)) {
                 CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(username);
 

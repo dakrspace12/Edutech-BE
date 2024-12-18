@@ -8,6 +8,7 @@ import edutech.backend.repository.RoleRepository;
 import edutech.backend.repository.UserRepository;
 import edutech.backend.security.CustomUserDetails;
 import edutech.backend.util.JwtTokenUtil;
+import edutech.backend.util.MessageConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,7 +44,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public String registerUser(SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername()) || userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return "Username or Email is already in use";
+            return MessageConstant.USERNAME_OR_EMAIL_IS_ALREADY_IN_USE;
         }
 
         if (signUpRequest.getRole() == null || signUpRequest.getRole().isEmpty()) {
@@ -55,17 +56,17 @@ public class AuthServiceImpl implements AuthService {
             try {
                 Role.RoleName roleEnum = Role.RoleName.valueOf(roleName);
                 Role role = roleRepository.findByName(roleEnum)
-                        .orElseThrow(() -> new RuntimeException("Role not found: " + roleEnum));
+                        .orElseThrow(() -> new RuntimeException(MessageConstant.ROLE_NOT_FOUND + roleEnum));
                 roles.add(role);
             } catch (IllegalArgumentException e) {
-                throw new RuntimeException("Invalid role name provided: " + roleName, e);
+                throw new RuntimeException(MessageConstant.INVALID_ROLE_NAME_PROVIDED + roleName, e);
             }
         }
 
         User user = new User();
         user.setUsername(signUpRequest.getUsername());
         user.setEmail(signUpRequest.getEmail());
-        user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));  // Ensure password is hashed
+        user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
         user.setRoles(roles);
         userRepository.save(user);
 

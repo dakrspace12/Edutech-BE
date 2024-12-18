@@ -12,7 +12,7 @@ import java.util.Set;
 @Table(name = "roles")
 @Getter
 @Setter
-@NoArgsConstructor  // Lombok generates a no-args constructor
+@NoArgsConstructor
 public class Role {
 
 	@Id
@@ -20,17 +20,15 @@ public class Role {
 	private Long id;
 
 	@Enumerated(EnumType.STRING)
-	private RoleName name;  // Ensures roles are stored as strings in the DB
+	private RoleName name;
 
 	@ManyToMany(mappedBy = "roles")
 	private Set<User> users;
 
-	// Enum for role types
 	public enum RoleName {
 		ROLE_USER,
 		ROLE_ADMIN
 	}
-	// Constructor with RoleName
 	public Role(RoleName name) {
 		this.name = name;
 	}
