@@ -10,32 +10,28 @@ public class PasswordUtil {
 
     private static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
-    // Method to encode a plain text password
     public String encodePassword(String rawPassword) {
         if (rawPassword == null || rawPassword.isEmpty()) {
-            throw new IllegalArgumentException("Password cannot be null or empty");
+            throw new IllegalArgumentException(MessageConstant.PASSWORD_CANNOT_BE_NULL_OR_EMPTY);
         }
         return PASSWORD_ENCODER.encode(rawPassword);
     }
 
-    // Method to validate if a raw password matches the encoded password
     public boolean matches(String rawPassword, String encodedPassword) {
         if (rawPassword == null || encodedPassword == null) {
-            throw new IllegalArgumentException("Raw password and encoded password cannot be null");
+            throw new IllegalArgumentException(MessageConstant.RAW_PASSWORD_AND_ENCODED_PASSWORD_CANNOT_BE_NULL);
         }
         return PASSWORD_ENCODER.matches(rawPassword, encodedPassword);
     }
 
-    // Method to check password strength
     public boolean isPasswordStrong(String password) {
         if (password == null || password.isEmpty()) {
-            return false; // or throw an exception depending on your use case
+            return false;
         }
-        // Enhanced password strength check: min 8 chars, 1 upper, 1 lower, 1 number, 1 special char
         return password.length() >= 8 &&
-                password.matches(".*[A-Z].*") &&  // at least one uppercase letter
-                password.matches(".*[a-z].*") &&  // at least one lowercase letter
-                password.matches(".*[0-9].*") &&  // at least one digit
-                password.matches(".*[!@#$%^&*(),.?\":{}|<>].*");  // at least one special character
+                password.matches(".*[A-Z].*") &&
+                password.matches(".*[a-z].*") &&
+                password.matches(".*[0-9].*") &&
+                password.matches(".*[!@#$%^&*(),.?\":{}|<>].*");
     }
 }

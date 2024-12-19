@@ -8,6 +8,7 @@ import edutech.backend.entity.User;
 import edutech.backend.exception.CustomException;
 import edutech.backend.repository.UserRepository;
 import edutech.backend.util.JwtTokenUtil;
+import edutech.backend.util.MessageConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,7 @@ public class UserServiceImpl implements UserService{
     @Override
     public ApiResponse<Void> registerUser(SignupRequest signupRequest) {
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            throw new CustomException("Email is already in Use");
+            throw new CustomException(MessageConstant.EMAIL_IS_ALREADY_IN_USE);
         }
 
         User user = new User();
@@ -46,18 +47,17 @@ public class UserServiceImpl implements UserService{
         user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));  // Encrypt the password
         user.setEmail(signupRequest.getEmail());
 
-        // Save the user in the repository
         userRepository.save(user);
-        return new ApiResponse<>(true, "User registered successfully", null);
+        return new ApiResponse<>(true, MessageConstant.USER_REGISTERED_SUCCESSFULLY, null);
     }
 
     @Override
     public String authenticateUser(LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername())
-                .orElseThrow(() -> new CustomException("Invalid username or password"));
+                .orElseThrow(() -> new CustomException(MessageConstant.INVALID_USERNAME_OR_PASSWORD));
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new CustomException("Invalid username or password");
+            throw new CustomException(MessageConstant.INVALID_USERNAME_OR_PASSWORD);
         }
 
         return jwtUtil.generateToken(user.getUsername(), user.getRoles());
@@ -73,14 +73,14 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserDto getUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new CustomException("User not found with ID: " + id));
+                .orElseThrow(() -> new CustomException(MessageConstant.USER_NOT_FOUND_WITH_ID + id));
         return convertToDto(user);
     }
 
     @Override
     public void deleteUserById(Long id) {
         if (!userRepository.existsById(id)) {
-            throw new CustomException("User not found with ID: " + id);
+            throw new CustomException(MessageConstant.USER_NOT_FOUND_WITH_ID + id);
         }
         userRepository.deleteById(id);
     }

@@ -37,10 +37,9 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
-    // Method to return role names as a comma-separated string
     public String getRoleNames() {
         return roles.stream()
-                .map(role -> role.getName().name())  // Assuming Role has a `name` attribute of type Enum
+                .map(role -> role.getName().name())
                 .reduce((role1, role2) -> role1 + "," + role2)
                 .orElse("");
     }

@@ -4,6 +4,7 @@ package edutech.backend.service;
 
 import edutech.backend.entity.User;
 import edutech.backend.repository.UserRepository;
+import edutech.backend.util.MessageConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,7 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public User getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException(MessageConstant.USER_NOT_FOUND_WITH_ID + id));
     }
 
     @Override
