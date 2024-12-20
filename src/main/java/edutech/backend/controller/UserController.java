@@ -7,6 +7,7 @@ import edutech.backend.dto.SignupRequest;
 import edutech.backend.dto.UserDto;
 import edutech.backend.service.UserService;
 import edutech.backend.service.UserServiceImpl;
+import edutech.backend.util.MessageConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,42 +25,42 @@ public class UserController {
     @PostMapping("/request-password-reset")
     public ResponseEntity<ApiResponse<Void>> requestPasswordReset(@RequestParam String email) {
         userService.requestPasswordReset(email);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Password reset link sent", null));
+        return ResponseEntity.ok(new ApiResponse<>(true, MessageConstant.PASSWORD_RESET_LINK_SENT, null));
     }
 
     @PostMapping("/reset-password")
     public ResponseEntity<ApiResponse<Void>> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
         userService.resetPassword(token, newPassword);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Password reset successfully", null));
+        return ResponseEntity.ok(new ApiResponse<>(true, MessageConstant.PASSWORD_RESET_SUCESSFULLY, null));
     }
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Void>> registerUser(@RequestBody SignupRequest signupRequest) {
         userService.registerUser(signupRequest);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponse<>(true, "User registered successfully", null));
+                .body(new ApiResponse<>(true, MessageConstant.USER_REGISTED_SUCESSFULLY, null));
     }
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<String>> authenticateUser(@RequestBody LoginRequest loginRequest) {
         String token = userService.authenticateUser(loginRequest);
-        return ResponseEntity.ok(new ApiResponse<>(true, "User authenticated successfully", token));
+        return ResponseEntity.ok(new ApiResponse<>(true, MessageConstant.USER_AUTHENTICATED, token));
     }
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<UserDto>>> getAllUsers() {
         List<UserDto> users = userService.getAllUsers();
-        return ResponseEntity.ok(new ApiResponse<>(true,"Users Retrieved Sucessfully",users));
+        return ResponseEntity.ok(new ApiResponse<>(true,MessageConstant.USERS_RETREIVED,users));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<UserDto>> getUserById(@PathVariable Long id) {
         UserDto userDto = userService.getUserById(id);
-        return  ResponseEntity.ok(new ApiResponse<>(true,"User Retrieved Sucessfully", userDto));
+        return  ResponseEntity.ok(new ApiResponse<>(true,MessageConstant.USER_RETREIVED, userDto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteUserById(@PathVariable Long id) {
         userService.deleteUserById(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponse<>(true, "User deleted successfully", null));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponse<>(true, MessageConstant.USER_DELETED, null));
     }
 }

@@ -5,6 +5,7 @@ import edutech.backend.entity.User;
 import edutech.backend.exception.CustomException;
 import edutech.backend.repository.UserRepository;
 import edutech.backend.util.JwtTokenUtil;
+import edutech.backend.util.MessageConstant;
 import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -108,7 +110,7 @@ public class UserServiceImpl implements UserService{
     @Override
     public void resetPassword(String token, String newPassword) {
         Claims claims = jwtUtil.extractResetPasswordClaims(token);
-        if (claims == null) {
+        if (Objects.isNull(claims)) {
             throw new CustomException("Invalid token");
         }
 
@@ -128,7 +130,7 @@ public class UserServiceImpl implements UserService{
             userRepository.save(user);
             logger.info("Password reset successfully for user: {}", username);
         } else {
-            throw new CustomException("Invalid token or user not found");
+            throw new CustomException(MessageConstant.INVALID_TOKEN_OR_USER_NOT_FOUND);
         }
     }
 
