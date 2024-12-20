@@ -15,4 +15,6 @@ public class MessageConstant {
     public static final String USER_RETREIVED="User Retrieved Sucessfully";
     public static final String USER_DELETED="User deleted successfully";
     public static final String INVALID_TOKEN_OR_USER_NOT_FOUND= "Invalid token or user not found";
+    public static final String USER_NOT_WITH_MAIL="User not found with email: ";
+    public static final String USER_NOT_WITH_USERNAME="User not found with username: ";
 }

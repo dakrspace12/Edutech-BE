@@ -9,24 +9,25 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.util.*;
 import java.util.function.Function;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenUtil {
-
+    private static final Logger logger = Logger.getLogger(JwtTokenUtil.class.getName());
     private final SecretKey secretKey;
 
     @Value("${jwt.expirationMs}")
     private Long expirationMs;
 
-    // Constructor to initialize the secret key using a secure method
+
     public JwtTokenUtil() {
         try {
-            // For production, consider loading from a secure location like environment variables or config files
-            System.out.println("Initializing JwtTokenUtil with automatically generated key.");
-            this.secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);  // Guarantees a 256-bit key
+
+            logger.info("Initializing JwtTokenUtil with automatically generated key.");
+            this.secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
         } catch (Exception e) {
-            System.err.println("Error initializing JwtTokenUtil: " + e.getMessage());
+            logger.severe("Error initializing JwtTokenUtil: " + e.getMessage());
             throw e;
         }
     }
@@ -78,18 +79,18 @@ public class JwtTokenUtil {
                 .compact();
     }
 
-    // Extract roles from the token
+
     public Set<Role> extractRoles(String token) {
         Claims claims = extractAllClaims(token);
-        String[] roles = claims.get("roles", String[].class);  // Extract roles as an array of strings
+        String[] roles = claims.get("roles", String[].class);
 
         // Convert the array of strings into Role objects
         return Arrays.stream(roles)
-                .map(roleName -> new Role(Role.RoleName.valueOf(roleName)))  // Map each string to Role
+                .map(roleName -> new Role(Role.RoleName.valueOf(roleName)))
                 .collect(Collectors.toSet());
     }
 
-    // Validate the JWT token by checking username and expiration
+
     public Boolean validateToken(String token, String username) {
         final String extractedUsername = extractUsername(token);
         return (extractedUsername.equals(username) && !isTokenExpired(token));
@@ -99,7 +100,7 @@ public class JwtTokenUtil {
         try {
             return extractAllClaims(token);
         } catch (Exception e) {
-            System.err.println("Failed to extract claims from reset password token: " + e.getMessage());
+            logger.severe("Failed to extract claims from reset password token: " + e.getMessage());
             return null;
         }
     }
