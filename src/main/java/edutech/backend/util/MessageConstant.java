@@ -27,4 +27,6 @@ public class MessageConstant {
     public static final String INVALID_USERNAME_OR_PASSWORD ="Invalid username or password";
     public static final String PASSWORD_CANNOT_BE_NULL_OR_EMPTY ="Password cannot be null or empty";
     public static final String RAW_PASSWORD_AND_ENCODED_PASSWORD_CANNOT_BE_NULL ="Raw password and encoded password cannot be null";
+    public static final String LESSON_NOT_FOUND="Lesson not found";
+    public static final String COURSE_MODULE_NOT_FOUND="CourseModule not found with ID";
 }
